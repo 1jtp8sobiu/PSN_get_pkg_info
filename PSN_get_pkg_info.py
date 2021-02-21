@@ -4087,9 +4087,14 @@ if __name__ == "__main__":
                     if Results["PKG_CONTENT_TYPE"] == 0x4 \
                     or Results["PKG_CONTENT_TYPE"] == 0xB:
                         Results["PLATFORM"] = CONST_PLATFORM.PS3
-                        if 0x0B in Pkg_Meta_Data:
-                            Results["PKG_TYPE"] = CONST_PKG_TYPE.PATCH
-                            Nps_Type = "PS3 UPDATE"
+                        for Item_Entry in Pkg_Item_Entries:
+                            if not "NAME" in Item_Entry:
+                                continue
+                            #
+                            if CONST_REGEX_EBOOT_BIN.search(Item_Entry["NAME"]):
+                                Results["PKG_TYPE"] = CONST_PKG_TYPE.PATCH
+                                Nps_Type = "PS3 UPDATE"
+                                break
                         else:
                             Results["PKG_TYPE"] = CONST_PKG_TYPE.DLC
                             Nps_Type = "PS3 DLC"
@@ -4115,13 +4120,16 @@ if __name__ == "__main__":
                     or Results["PKG_CONTENT_TYPE"] == 0x13 \
                     or Results["PKG_CONTENT_TYPE"] == 0x14:
                         Results["PLATFORM"] = CONST_PLATFORM.PS3
-                        Results["PKG_TYPE"] = CONST_PKG_TYPE.GAME
+                        if "ww.np.dl.playstation.net" in Source:
+                            Results["PKG_TYPE"] = CONST_PKG_TYPE.PATCH
+                            Nps_Type = "PS3 UPDATE"
+                        else:
+                            Results["PKG_TYPE"] = CONST_PKG_TYPE.GAME
+                            Nps_Type = "PS3 GAME"
                         if Results["PKG_CONTENT_TYPE"] == 0x14:
                             Results["PKG_SUB_TYPE"] = CONST_PKG_SUB_TYPE.PSP_REMASTER
                         #
                         Results["PKG_EXTRACT_CNT_ROOT"] = Pkg_Header["CONTENT_ID"][7:]
-                        #
-                        Nps_Type = "PS3 GAME"
                         #
                         if "TITLE_ID" in Results \
                         and Results["TITLE_ID"].strip():
@@ -4226,7 +4234,8 @@ if __name__ == "__main__":
                         Results["PLATFORM"] = CONST_PLATFORM.PSV
                         #
                         if "SFO_CATEGORY" in Results \
-                        and Results["SFO_CATEGORY"] == "gp":
+                        and (Results["SFO_CATEGORY"] == "gp" \
+                            or Results["SFO_CATEGORY"] == "gpc"):
                             Results["PKG_TYPE"] = CONST_PKG_TYPE.PATCH
                             Results["PKG_EXTRACT_UX0_ROOT"] = os.path.join("patch", Results["CID_TITLE_ID1"])
                             Nps_Type = "PSV UPDATE"
