@@ -793,6 +793,7 @@ CONST_REGEX_PBP_SUFFIX = re.compile(r"\.PBP$", flags=re.UNICODE|re.IGNORECASE)
 CONST_REGEX_EDAT_SUFFIX = re.compile(r"\.(edat|EDAT)$", flags=re.UNICODE|re.IGNORECASE)  ## packages: PS3, PSP, PSV, PSX
 CONST_REGEX_SDAT_SUFFIX = re.compile(r"\.(sdat|SDAT)$", flags=re.UNICODE|re.IGNORECASE)  ## packages: PS3, a few PSV, a few PSP
 CONST_REGEX_EBOOT_BIN = re.compile(r"(eboot\.bin|EBOOT\.BIN)$", flags=re.UNICODE|re.IGNORECASE)  ## packages: PS3, a few PSP, PSV, PSM
+CONST_REGEX_EBOOT_PBP = re.compile(r"(eboot\.pbp|EBOOT\.PBP)$", flags=re.UNICODE|re.IGNORECASE)
 ## --> Header
 CONST_PBP_HEADER_ENDIAN = CONST_FMT_LITTLE_ENDIAN
 CONST_PBP_MAGIC = bytes.fromhex("00504250")  ## "\x00PBP"
@@ -4201,6 +4202,14 @@ if __name__ == "__main__":
                             elif Pbp_Sfo_Values["CATEGORY"] == "MG":
                                 Results["PKG_TYPE"] = CONST_PKG_TYPE.DLC
                                 Nps_Type = "PSP DLC"
+                                #
+                                for Item_Entry in Pkg_Item_Entries:
+                                    if not "NAME" in Item_Entry:
+                                        continue
+                                    if CONST_REGEX_EBOOT_PBP.search(Item_Entry["NAME"]):
+                                        Results["PKG_TYPE"] = CONST_PKG_TYPE.GAME
+                                        Nps_Type = "PSP GAME"
+                                        break
                         if not "PKG_TYPE" in Results:  ## Normally CATEGORY = EG
                             Results["PKG_TYPE"] = CONST_PKG_TYPE.GAME
                             Nps_Type = "PSP GAME"
