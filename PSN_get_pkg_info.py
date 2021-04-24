@@ -4220,7 +4220,10 @@ if __name__ == "__main__":
                             Results["PKG_EXTRACT_UX0_LIC_ROOT"] = os.path.join("pspemu", "PSP", "LICENSE")
                             Results["PKG_EXTRACT_UX0_LIC_FILE"] = os.path.join(Results["PKG_EXTRACT_UX0_LIC_ROOT"], "".join((Results["PKG_CONTENT_ID"], ".rif")))
                         Results["PKG_EXTRACT_UX0_ISOR"] = os.path.join("pspemu", "ISO")
-                        Results["PKG_EXTRACT_ISO_NAME"] = "".join((Results["SFO_TITLE"], " [", Results["PKG_CID_TITLE_ID1"], "]", ".iso"))
+                        if "SFO_TITLE" in Results:
+                            Results["PKG_EXTRACT_ISO_NAME"] = "".join((Results["SFO_TITLE"], " [", Results["PKG_CID_TITLE_ID1"], "]", ".iso"))
+                        else:
+                            Results["PKG_EXTRACT_ISO_NAME"] = "".join((" [", Results["PKG_CID_TITLE_ID1"], "]", ".iso"))
                         #
                         if Results["PKG_CONTENT_TYPE"] == 0x7:
                             if "SFO_CATEGORY" in Results \
